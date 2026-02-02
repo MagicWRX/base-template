@@ -10,8 +10,13 @@ type ConsentState = 'unknown' | 'granted' | 'denied'
 
 function readConsent(): ConsentState {
   try {
-    const v = globalThis.localStorage?.getItem(STORAGE_KEY)
-    if (v === 'granted' || v === 'denied') return v
+    if (typeof document === 'undefined') return 'unknown'
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${STORAGE_KEY}=`)
+    if (parts.length === 2) {
+      const v = parts.pop()?.split(';').shift()
+      if (v === 'granted' || v === 'denied') return v as ConsentState
+    }
     return 'unknown'
   } catch {
     return 'unknown'
@@ -20,7 +25,9 @@ function readConsent(): ConsentState {
 
 function writeConsent(value: Exclude<ConsentState, 'unknown'>) {
   try {
-    globalThis.localStorage?.setItem(STORAGE_KEY, value)
+    const d = new Date()
+    d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000)) // 1 year
+    document.cookie = `${STORAGE_KEY}=${value};expires=${d.toUTCString()};path=/;SameSite=Lax`
   } catch {
     // ignore
   }

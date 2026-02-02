@@ -1,10 +1,20 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  
-  // Security Headers
+/**
+ * Next.js Middleware - Orchestration Layer
+ *
+ * Responsibility: High-level request orchestration, security headers, and auth session management.
+ * Delegates Supabase-specific auth helpers to @/lib/supabase/middleware.
+ *
+ * Do not add business logic here - keep it focused on request/response handling.
+ */
+
+export async function middleware(request: NextRequest) {
+  // 1. Initialize Supabase Auth session (handles cookie refreshing)
+  const response = await updateSession(request);
+
+  // 2. Security Headers
   const headers = response.headers;
   
   // Prevent clickjacking
@@ -29,12 +39,9 @@ export function middleware(request: NextRequest) {
   
   headers.set('Content-Security-Policy', csp);
 
-  // Auth Verification (Placeholder)
-  // In a real scenario, check for 'sb-access-token' or similar
-  // const token = request.cookies.get('sb-access-token');
-  // if (!token && request.nextUrl.pathname.startsWith('/protected')) {
-  //   return NextResponse.redirect(new URL('/login', request.url));
-  // }
+  // 3. Geo / Consent Logic (Placeholder)
+  // TODO: Add geo-blocking logic here if needed
+  // TODO: Add consent cookie check here (see src/config/ads.ts)
 
   return response;
 }

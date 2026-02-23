@@ -108,5 +108,11 @@ This is a **starter template** for new MagicWRX customer websites. It provides t
 - All shared functionality should live in `SHARED/` and be consumed as packages
 - Follow the Top-Down Theme Contract for any theming
 
+## Copilot Chat Safety (Critical)
+- **No `.env` context in chat:** NEVER include `.env*` file contents in any response, summary, attachment, snippet, or tool output.
+- **No `.env` attachments:** NEVER attach `.env*` files to chat messages.
+- **Active editor guard:** If the active editor file path matches `.env` or `.env.*`, do NOT continue with chat/file operations until the user switches to a non-secret file.
+- **Sanitize outputs:** If commands return secrets, redact values and show only key names/status.
+
 ## Retirement Notice
 **Firebase and Firebase Emulators have been retired.** Do not add new Firebase integrations or rely on Firebase emulators for local development. Use approved alternatives listed in the SSOT (`DOCs/BUSINESS/BUSINESS_WORKSPACES.md`) and the `SHARED/` workspace for replacement tooling.

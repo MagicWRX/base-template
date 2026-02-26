@@ -2,6 +2,7 @@
   "name": "base-template",
   "version": "2.0.0",
   "private": true,
+  "regid": "GS-2026-16.0.10-19.0.0-22LTS",
   "scripts": {
     "dev": "next dev -p 3014",
     "build": "next build",

@@ -75,6 +75,26 @@ Every task must follow this cycle to prevent drift and ensure quality:
     - Delete branch after merge.
 
 ---
+
+### 🚨 Ecosystem Anti-Patterns (Binding — ERR-01 through ERR-10)
+> **Full reference:** `DOCs/TOOLS/ECOSYSTEM_CLEAN_CODE_PROTOCOL.md`
+
+These are the named error classes that have caused silent build/deploy failures in this ecosystem. Violating any rule is **blocking**.
+
+| Code | Rule | Never do | Always do |
+|------|------|----------|-----------|
+| ERR-01 | Dynamic `require.resolve` | `require.resolve(\`${pkg}/...\`)` | `path.join(cwd, 'node_modules', pkg, 'package.json')` + `cwd/../` fallback |
+| ERR-02 | Vercel file tracing gap | `readFileSync` on `node_modules/**` without tracing | Add `outputFileTracingIncludes` to `next.config.js` |
+| ERR-03 | Hardcoded colors | `text-black`, `bg-white`, `text-gray-*`, any hex in JSX | `text-foreground`, `text-muted-foreground`, `bg-background`, `bg-card` |
+| ERR-04 | Monorepo CWD mismatch | Assume `cwd/node_modules` = root | Always try both `cwd/node_modules` AND `cwd/../node_modules` |
+| ERR-05 | `"type"` field in packages | `"type": "module"` or `"type": "commonjs"` | Omit `"type"` entirely in `@magicwrx/*` packages |
+| ERR-06 | Token family mixing | `hub-*` classes in SHARED tools or non-ADMIN workspaces | Shadcn tokens everywhere; `hub-*` only in ADMIN JSX |
+| ERR-07 | Version not published before consumer update | Merge consumer PR before publishing package | Publish to GitHub Packages FIRST, then update consumer |
+| ERR-08 | `file:` paths in lockfile | Commit `package-lock.json` without validating | `wrx validate-lockfile` before every push |
+| ERR-09 | FOUC on dark mode | Apply theme in `useEffect` only | Inline `<script>` in `<head>` sets `data-theme` before paint |
+| ERR-10 | `always-auth=true` in `.npmrc` | `always-auth=true` | Remove it — deprecated in npm v7+ |
+
+---
 <!-- END GLOBAL CONTEXT -->
 
 <!-- Use this file to provide workspace-specific custom instructions to Copilot. -->
